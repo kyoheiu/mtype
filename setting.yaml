@@ -1,0 +1,8 @@
+- app: i3
+  src: /home/kyohei/dotfiles/i3/config
+  key: 'font pango:'
+  with_size: true
+- app: gtk3
+  src: /home/kyohei/dotfiles/gtk-3.0/settings.ini
+  key: 'gtk-font-name = '
+  with_size: false
