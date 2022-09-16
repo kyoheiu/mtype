@@ -11,13 +11,16 @@ struct Settings {
     src: PathBuf,
     key: String,
     txt: String,
-    number: Option<usize>,
 }
 
 fn read_setting() -> Vec<Settings> {
-    if let Ok(y) = read_to_string("setting.yaml") {
+    let mut config = dirs::config_dir().unwrap();
+    config.push("mtype");
+    config.push("setting.yaml");
+    if let Ok(y) = read_to_string(config) {
         serde_yaml::from_str(&y).unwrap()
     } else {
+        println!("Error: Failed to read setting.yaml");
         vec![]
     }
 }
@@ -31,34 +34,33 @@ fn run() {
 
 fn change_one_line(s: Settings) {
     if let Ok(config) = read_to_string(&s.src) {
+        let lines = s.txt.lines().count();
+
         let mut new = String::new();
-        match s.number {
-            None => {
-                for line in config.lines() {
-                    if line.starts_with(&s.key) {
-                        new.push_str(&s.txt);
-                        new.push('\n');
-                    } else {
-                        new.push_str(line);
-                        new.push('\n');
-                    }
+        if lines == 0 {
+            for line in config.lines() {
+                if line.starts_with(&s.key) {
+                    new.push_str(&s.txt);
+                    new.push('\n');
+                } else {
+                    new.push_str(line);
+                    new.push('\n');
                 }
             }
-            Some(i) => {
-                let mut count = 0;
-                for line in config.lines() {
-                    if count > 0 {
-                        count -= 1;
-                        continue;
-                    }
-                    if line.starts_with(&s.key) {
-                        new.push_str(&s.txt);
-                        new.push('\n');
-                        count = i;
-                    } else {
-                        new.push_str(line);
-                        new.push('\n');
-                    }
+        } else {
+            let mut count = 0;
+            for line in config.lines() {
+                if count > 0 {
+                    count -= 1;
+                    continue;
+                }
+                if line.starts_with(&s.key) {
+                    new.push_str(&s.txt);
+                    new.push('\n');
+                    count = lines;
+                } else {
+                    new.push_str(line);
+                    new.push('\n');
                 }
             }
         }
@@ -66,5 +68,6 @@ fn change_one_line(s: Settings) {
             println!("New config created for {}.", s.app);
         };
     } else {
+        println!("No such file: {}", s.app);
     }
 }

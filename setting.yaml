@@ -5,11 +5,11 @@
 - app: gtk3
   src: /home/kyohei/dotfiles/gtk-3.0/settings.ini
   key: 'gtk-font-name = '
-  txt: 'gtk-font-name = Berkeley Mono'
+  txt: 'gtk-font-name = Source Han Sans'
 - app: gtk2
-  src: /home/kyohei/dotfiles/gtkrc-2.0
+  src: /home/kyohei/dotfiles/.gtkrc-2.0
   key: 'gtk-font-name = '
-  txt: 'gtk-font-name = "Berkeley Mono"'
+  txt: 'gtk-font-name = "Source Han Sans"'
 - app: alacritty
   src: /home/kyohei/dotfiles/alacritty/alacritty.yml
   key: '# Font configuration'
@@ -26,7 +26,6 @@
         family: Berkeley Mono
         style: Italic
       size: 14
-  number: 12
 - app: vs code
   src: /home/kyohei/.config/Code/User/settings.json
   key: '  "editor.fontFamily": '
