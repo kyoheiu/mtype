@@ -27,3 +27,7 @@
         style: Italic
       size: 14
   number: 12
+- app: vs code
+  src: /home/kyohei/.config/Code/User/settings.json
+  key: '  "editor.fontFamily": '
+  txt: '  "editor.fontFamily": "Berkeley Mono",'
