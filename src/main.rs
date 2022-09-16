@@ -1,9 +1,6 @@
 use serde::Deserialize;
 use std::{fs::read_to_string, path::PathBuf};
 
-const FONT_WITHOUT_SIZE: &str = "jetbrains mono";
-const FONT_WITH_SIZE: &str = "jetbrainsmono 9";
-
 fn main() {
     run();
 }
@@ -13,7 +10,8 @@ struct Settings {
     app: String,
     src: PathBuf,
     key: String,
-    with_size: bool,
+    txt: String,
+    number: Option<usize>,
 }
 
 fn read_setting() -> Vec<Settings> {
@@ -27,30 +25,46 @@ fn read_setting() -> Vec<Settings> {
 fn run() {
     let setting = read_setting();
     for s in setting {
-        println!("{}", change_one_line(s));
+        change_one_line(s);
     }
 }
 
-fn change_one_line(s: Settings) -> String {
-    if let Ok(config) = read_to_string(s.src) {
+fn change_one_line(s: Settings) {
+    if let Ok(config) = read_to_string(&s.src) {
         let mut new = String::new();
-        for line in config.lines() {
-            if line.starts_with(&s.key) {
-                let mut new_line = s.key.clone();
-                if s.with_size {
-                    new_line.push_str(FONT_WITH_SIZE);
-                } else {
-                    new_line.push_str(FONT_WITHOUT_SIZE);
+        match s.number {
+            None => {
+                for line in config.lines() {
+                    if line.starts_with(&s.key) {
+                        new.push_str(&s.txt);
+                        new.push('\n');
+                    } else {
+                        new.push_str(line);
+                        new.push('\n');
+                    }
                 }
-                new.push_str(&new_line);
-                new.push('\n');
-            } else {
-                new.push_str(line);
-                new.push('\n');
+            }
+            Some(i) => {
+                let mut count = 0;
+                for line in config.lines() {
+                    if count > 0 {
+                        count -= 1;
+                        continue;
+                    }
+                    if line.starts_with(&s.key) {
+                        new.push_str(&s.txt);
+                        new.push('\n');
+                        count = i;
+                    } else {
+                        new.push_str(line);
+                        new.push('\n');
+                    }
+                }
             }
         }
-        new
+        if std::fs::write(s.src, new).is_ok() {
+            println!("New config created for {}.", s.app);
+        };
     } else {
-        String::new()
     }
 }
